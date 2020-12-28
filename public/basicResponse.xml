@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<InsuranceCommon:BopPolicyResponse 
+  xmlns:InsuranceCommon="http://www.InsuranceCommon.org/"
+  xmlns:Carrier="http://www.carrier.com"
+  >
+        <InsuranceCommon:policyNumber>1234</InsuranceCommon:policyNumber>
+        <InsuranceCommon:deductible>$1000</InsuranceCommon:deductible>
+        <InsuranceCommon:limit>$1000000</InsuranceCommon:limit>
+        <InsuranceCommon:sic>07839901</InsuranceCommon:sic>
+        <InsuranceCommon:bound>false</InsuranceCommon:bound>
+        <Carrier:AdditionalQuestions>
+            <Carrier:Question>
+                What is your license identifier?
+            </Carrier:Question>
+          <Carrier:Question>
+                In which state are you licensed?
+            </Carrier:Question>            
+        </Carrier:AdditionalQuestions>
+	</InsuranceCommon:BopPolicyResponse>

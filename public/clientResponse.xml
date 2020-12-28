@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<catalog xmlns:InsuranceCommon="http://www.InsuranceCommon.org/" xmlns:LicensingBody="http://www.lisenceBody.org">
+	<InsuranceCommon:BopPolicyResponse>
+        <InsuranceCommon:policyNumber>1234</InsuranceCommon:policyNumber>
+        <InsuranceCommon:deductible>$1000</InsuranceCommon:deductible>
+        <InsuranceCommon:limit>$1000000</InsuranceCommon:limit>
+        <InsuranceCommon:sic>07839901</InsuranceCommon:sic>
+        <InsuranceCommon:bound>false</InsuranceCommon:bound>
+		<LicensingBody:LicenseInfo>
+            <LicensingBody:LicenseNumber>56789</Carrier:LicenseNumber>
+        </LicensingBody:LicenseInfo>
+	</InsuranceCommon:BopPolicyResponse>
+</catalog>
