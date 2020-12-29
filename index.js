@@ -1,4 +1,4 @@
-var x = require('libxmljs')
+var libxmljs = require('libxmljs')
 const fs = require('fs')
 
 var express = require('express');
@@ -44,6 +44,29 @@ function getLicnese(number) {
         }
     })
 }
+
+app.get('/insurer/getProofOfInsurance/:businessName', async function (req, res) {
+    console.log(req.params.businessName)
+    fs.readFile('public/basicResponse.xml', 'utf-8', (err, data) => { 
+        if (err) throw err; 
+        console.log(data); 
+        const baseDoc = libxmljs.parseXmlString(data)
+        // var gchild = baseDoc.get("//InsuranceCommon:bound", {InsuranceCommon: "http://www.InsuranceCommon.org/"})
+        var gchild = baseDoc.find("//InsuranceCommon:bound", {InsuranceCommon:"http://www.InsuranceCommon.org/"})
+        console.log(gchild.toString())
+        gchild[0].remove();
+        var root = baseDoc.root()
+        var newElement = root.node("bound")
+        newElement.namespace("http://www.InsuranceCommon.org/")
+        newElement.text("true")
+        console.log("modified: ", baseDoc.toString())
+
+        
+
+        
+    })
+    res.send(req.params.businessName)
+})
 
 app.get('/quote/:sic', function (req, res) {
     getQuoteForSic(req.params.sic)
