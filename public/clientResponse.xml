@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <catalog xmlns:InsuranceCommon="http://www.InsuranceCommon.org/" xmlns:LicensingBody="http://www.lisenceBody.org">
 	<InsuranceCommon:BopPolicyResponse>
         <InsuranceCommon:policyNumber>1234</InsuranceCommon:policyNumber>
