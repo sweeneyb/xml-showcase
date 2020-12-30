@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <InsuranceCommon:BopPolicyResponse 
   xmlns:InsuranceCommon="http://www.InsuranceCommon.org/"
-  xmlns:Carrier="http://www.carrier.com"
   >
         <InsuranceCommon:policyNumber>1234</InsuranceCommon:policyNumber>
         <InsuranceCommon:deductible>$1000</InsuranceCommon:deductible>

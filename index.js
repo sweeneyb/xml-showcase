@@ -8,13 +8,9 @@ var port = 3000;
 
 app.use(express.static('public'))
 
-app.set('view engine', 'pug');
-
-app.get('/', function(req, res){
-    res.render('index');
-});
-
 // This mimics a state-run service that response with license XMLs
+
+// curl -i http://localhost:3000/license/5555
 app.get('/license/:number', async function (req, res) {
     try {
         const license = await getLicnese(req.params.number)
@@ -67,41 +63,34 @@ const nameToLicenseNumberService = {
 }
 
 
-//This starts the section that mimics an insurance carrier
+//This starts the section that mimics an insurance carrier delivering proof of insurance and a license
+
+// curl -i "http://localhost:3000/insurer/getProofOfInsurance/A%20Growth%20Business"
 app.get('/insurer/getProofOfInsurance/:businessName', function (req, res) {
     console.log(req.params.businessName)
     fs.readFile('public/basicResponse.xml', 'utf-8', async (err, data) => { 
         if (err) throw err; 
-        // console.log(data); 
         const baseDoc = libxmljs.parseXmlString(data)
-        // var gchild = baseDoc.get("//InsuranceCommon:bound", {InsuranceCommon: "http://www.InsuranceCommon.org/"})
-        var gchild = baseDoc.find("//InsuranceCommon:bound", {InsuranceCommon:"http://www.InsuranceCommon.org/"})
-        console.log("tostring", gchild.toString())
-        gchild[0].text("true")
-        console.log("tostring", gchild.toString())
-        console.log(baseDoc.toString())
 
+        // setting to true to simulate that we've actually issued the insurance
+        var gchild = baseDoc.find("//InsuranceCommon:bound", {InsuranceCommon:"http://www.InsuranceCommon.org/"})
+        gchild[0].text("true")
 
         const licenseNumber = nameToLicenseNumberService.getByName(req.params.businessName)
-        // console.log(licenseNumber)
         const licenseDoc = await getLicense(licenseNumber)
-        // const licenseText = getLicense()
-
-        // console.log("file2 ", await getLicense("5555"))    
-
         const licenseDocXml = libxmljs.parseXmlString(licenseDoc)
-        // console.log("attrs ", licenseDocXml.root().attrs())
-        // console.log("new ...", licenseDocXml.root().toString())
         baseDoc.root().addChild(licenseDocXml.root())
-        baseDoc.root().defineNamespace("license","http://www.example-state.gov/license/arborist")
         console.log(baseDoc.toString())
 
+        res.setHeader('content-type', 'text/xml');
         res.send(baseDoc.toString())    
     })
     
 })
 
 // This emulates an insurance quote for a specific business type.
+
+// curl -i "http://localhost:3000/quote/07839901"
 app.get('/quote/:sic', function (req, res) {
     getQuoteForSic(req.params.sic)
     .then(result => {
@@ -123,14 +112,19 @@ function getQuoteForSic(sic) {
     return new Promise((resolve, reject) => {
         if(sic == "07839901") {
             try {
+                // usually another system would generate this, but we're going to take a template
                 fs.readFile('public/basicResponse.xml', 'utf-8', (err, data) => { 
                     if (err) throw err; 
                     console.log(data); 
                     const licenseDocXml = libxmljs.parseXmlString(data)
+
+                    // Add carrier-specific items
                     const root = licenseDocXml.root()
                     var q1 = root.node("Carrier:AdditionalQuestions")
+                    q1.defineNamespace("Carrier", "http://www.carrier.com")
                     q1.node("Carrier:Question").text("What is your license identifier?")
                     var q2 = root.node("Carrier:AdditionalQuestions")
+                    q2.defineNamespace("Carrier", "http://www.carrier.com")
                     q2.node("Carrier:Question").text("In which state are you licensed?")
                     resolve(licenseDocXml.toString())
                 })
