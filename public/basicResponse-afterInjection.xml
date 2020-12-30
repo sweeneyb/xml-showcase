@@ -8,5 +8,12 @@
         <InsuranceCommon:limit>$1000000</InsuranceCommon:limit>
         <InsuranceCommon:sic>07839901</InsuranceCommon:sic>
         <InsuranceCommon:bound>false</InsuranceCommon:bound>
-        
+        <Carrier:AdditionalQuestions>
+            <Carrier:Question>
+                What is your license identifier?
+            </Carrier:Question>
+          <Carrier:Question>
+                In which state are you licensed?
+            </Carrier:Question>            
+        </Carrier:AdditionalQuestions>
 	</InsuranceCommon:BopPolicyResponse>

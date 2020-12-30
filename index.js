@@ -1,5 +1,6 @@
 var libxmljs = require('libxmljs')
 const fs = require('fs')
+const fetch = require('node-fetch');
 
 var express = require('express');
 var app = express();
@@ -13,6 +14,7 @@ app.get('/', function(req, res){
     res.render('index');
 });
 
+// This mimics a state-run service that response with license XMLs
 app.get('/license/:number', async function (req, res) {
     try {
         const license = await getLicnese(req.params.number)
@@ -31,7 +33,7 @@ function getLicnese(number) {
             try {
                 fs.readFile('public/license.xml', 'utf-8', (err, data) => { 
                     if (err) throw err; 
-                    console.log(data); 
+                    // console.log(data); 
                     resolve(data)
                 })
             }
@@ -45,29 +47,61 @@ function getLicnese(number) {
     })
 }
 
-app.get('/insurer/getProofOfInsurance/:businessName', async function (req, res) {
+async function getLicense(number) {
+    try {
+        var response = await fetch("http://localhost:3000/license/"+number)
+        var file = await response.text()
+        return file  
+    } catch (error) {
+        throw error
+    }
+}
+
+const nameToLicenseNumberService = { 
+    data : {
+        "A Growth Business" : "5555"
+    },
+    getByName: function (name) {
+        return this.data[name]
+    }
+}
+
+
+//This starts the section that mimics an insurance carrier
+app.get('/insurer/getProofOfInsurance/:businessName', function (req, res) {
     console.log(req.params.businessName)
-    fs.readFile('public/basicResponse.xml', 'utf-8', (err, data) => { 
+    fs.readFile('public/basicResponse.xml', 'utf-8', async (err, data) => { 
         if (err) throw err; 
-        console.log(data); 
+        // console.log(data); 
         const baseDoc = libxmljs.parseXmlString(data)
         // var gchild = baseDoc.get("//InsuranceCommon:bound", {InsuranceCommon: "http://www.InsuranceCommon.org/"})
         var gchild = baseDoc.find("//InsuranceCommon:bound", {InsuranceCommon:"http://www.InsuranceCommon.org/"})
-        console.log(gchild.toString())
-        gchild[0].remove();
-        var root = baseDoc.root()
-        var newElement = root.node("bound")
-        newElement.namespace("http://www.InsuranceCommon.org/")
-        newElement.text("true")
-        console.log("modified: ", baseDoc.toString())
+        console.log("tostring", gchild.toString())
+        gchild[0].text("true")
+        console.log("tostring", gchild.toString())
+        console.log(baseDoc.toString())
 
-        
 
-        
+        const licenseNumber = nameToLicenseNumberService.getByName(req.params.businessName)
+        // console.log(licenseNumber)
+        const licenseDoc = await getLicense(licenseNumber)
+        // const licenseText = getLicense()
+
+        // console.log("file2 ", await getLicense("5555"))    
+
+        const licenseDocXml = libxmljs.parseXmlString(licenseDoc)
+        // console.log("attrs ", licenseDocXml.root().attrs())
+        // console.log("new ...", licenseDocXml.root().toString())
+        baseDoc.root().addChild(licenseDocXml.root())
+        baseDoc.root().defineNamespace("license","http://www.example-state.gov/license/arborist")
+        console.log(baseDoc.toString())
+
+        res.send(baseDoc.toString())    
     })
-    res.send(req.params.businessName)
+    
 })
 
+// This emulates an insurance quote for a specific business type.
 app.get('/quote/:sic', function (req, res) {
     getQuoteForSic(req.params.sic)
     .then(result => {
@@ -80,6 +114,11 @@ app.get('/quote/:sic', function (req, res) {
     })
 })
 
+// Given a type of business, return a quote.  In this case, we're also returning
+// some follow up questions that would help give a better price. 
+
+// The questions aren't necessarily something the insurance xml standards body would
+// know about.
 function getQuoteForSic(sic) {
     return new Promise((resolve, reject) => {
         if(sic == "07839901") {
@@ -87,7 +126,13 @@ function getQuoteForSic(sic) {
                 fs.readFile('public/basicResponse.xml', 'utf-8', (err, data) => { 
                     if (err) throw err; 
                     console.log(data); 
-                    resolve(data)
+                    const licenseDocXml = libxmljs.parseXmlString(data)
+                    const root = licenseDocXml.root()
+                    var q1 = root.node("Carrier:AdditionalQuestions")
+                    q1.node("Carrier:Question").text("What is your license identifier?")
+                    var q2 = root.node("Carrier:AdditionalQuestions")
+                    q2.node("Carrier:Question").text("In which state are you licensed?")
+                    resolve(licenseDocXml.toString())
                 })
             }
             catch (error) {

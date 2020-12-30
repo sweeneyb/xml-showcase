@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<InsuranceCommon:BopPolicyResponse xmlns:InsuranceCommon="http://www.InsuranceCommon.org/" xmlns:Carrier="http://www.carrier.com">
+        <InsuranceCommon:policyNumber>1234</InsuranceCommon:policyNumber>
+        <InsuranceCommon:deductible>$1000</InsuranceCommon:deductible>
+        <InsuranceCommon:limit>$1000000</InsuranceCommon:limit>
+        <InsuranceCommon:sic>07839901</InsuranceCommon:sic>
+        <InsuranceCommon:bound>true</InsuranceCommon:bound>
+        <Carrier:AdditionalQuestions>
+            <Carrier:Question>
+                What is your license identifier?
+            </Carrier:Question>
+          <Carrier:Question>
+                In which state are you licensed?
+            </Carrier:Question>
+        </Carrier:AdditionalQuestions>
+        <license:ArboristLicense xmlns:license="http://www.example-state.gov/license/arborist">
+        <license:licenseNumber>5555</license:licenseNumber>
+        <license:startDate>2019-01-01</license:startDate>
+        <license:endDate>2020-01-01</license:endDate>
+        <license:licensee>A Growth Business</license:licensee>
+</license:ArboristLicense></InsuranceCommon:BopPolicyResponse>
