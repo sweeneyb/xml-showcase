@@ -31,7 +31,7 @@ try {
 // })
 
 SaxonJS.getResource({
-    file: "public/basicResponse.xml",
+    file: "public/basicResponse-afterInjection.xml",
     type: "xml"
 }).then(doc => {
     const result = SaxonJS.XPath.evaluate("//Question/text()", doc, { xpathDefaultNamespace : 'http://www.carrier.com' });
