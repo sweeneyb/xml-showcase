@@ -18,17 +18,17 @@ try {
   console.error(err)
 }
 
-// SaxonJS.transform({
-//     stylesheetFileName: "public/commonToQuestion.sef.json",
-//     sourceFileName: "public/basicResponse.xml",
-//     destination: "serialized"
-// }, "async")
-// .then (output => {
-//     console.log(output.principalResult)
-// })
-// .catch(error => {
-//     console.log(error)
-// })
+SaxonJS.transform({
+    stylesheetFileName: "public/commonToQuestion.sef.json",
+    sourceFileName: "public/basicResponse-afterInjection.xml",
+    destination: "serialized"
+}, "async")
+.then (output => {
+    console.log(output.principalResult)
+})
+.catch(error => {
+    console.log(error)
+})
 
 SaxonJS.getResource({
     file: "public/basicResponse-afterInjection.xml",
